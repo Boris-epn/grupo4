@@ -40,7 +40,5 @@ def imprimir_grafo(nodos):
             print(f'  Vecino: {vecino}')
 
 
-nodos = definir_grafo(num_nodos)
-imprimir_grafo(nodos)
 
         
