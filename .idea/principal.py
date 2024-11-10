@@ -1,13 +1,16 @@
+from collections import deque
 class Nodo:
     def __init__(self, dato=None, identificador=1):
         self.dato = dato
         self.vecinos = []
         self.identificador = identificador
 
+
     def agregar_vecino(self, vecino):
         if vecino not in self.vecinos:
             self.vecinos.append(vecino)
 
+nodos={}
 def solicitar_entero(mensaje):
     while True:
         try:
@@ -15,8 +18,8 @@ def solicitar_entero(mensaje):
         except ValueError:
             print("Por favor, ingrese un número válido.")
 
+
 def definir_grafo():
-    nodos = {}
     datos = set()  # Para evitar nombres duplicados
     identificador_actual = 1  # Contador de IDs para asignar secuencialmente
     while True:
@@ -25,8 +28,8 @@ def definir_grafo():
         print("2. Borrar un nodo")
         print("3. Editar un nodo")
         print("4. Mostrar el diccionario de grafo")
-
-        print("5. Salir")
+        print("5.Utilizar BFS")
+        print("6. Salir")
         opcion = solicitar_entero("Seleccione una opción: ")
 
         if opcion == 1:  # Ingresar nuevo nodo
@@ -77,8 +80,16 @@ def definir_grafo():
         elif opcion == 4:  # Mostrar diccionario
             grafo = construir_diccionario_grafo(nodos)
             imprimir_diccionario_grafo(grafo)
+        elif opcion == 5:
+            nodo_inicio=input('Coloque el contenido del nodo de inicio')
+            print (f'el nodo inicio es {nodo_inicio}')
+            nodo_fin=input('Coloque el contenido del nodo de fin')
+            print(f'el nodo fin es : {nodo_fin}')
+            camino=BFS(nodo_inicio,nodo_fin)
+            print(camino)
 
-        elif opcion == 5:  # Salir
+
+        elif opcion == 6:  # Salir
             print("Saliendo del programa.")
             break
 
@@ -97,6 +108,32 @@ def construir_diccionario_grafo(nodos):
 def imprimir_diccionario_grafo(grafo):
     print("\nDiccionario del grafo:")
     print(grafo)
+def BFS(nodoinicio, nodofin):
+    camino=[]
+    if nodoinicio not in [nodo.dato for nodo in nodos.values()] or nodofin not in [nodo.dato for nodo in nodos.values()]:
+        print('Coloque nodos válidos')
+        return None
+    por_inspeccionar = deque()
+    por_inspeccionar.append(nodoinicio)
+    padres = {nodoinicio: None}
+    lista_nodos = set()
+    while por_inspeccionar:
+        nodo_actual = por_inspeccionar.popleft()
+        lista_nodos.add(nodo_actual)
+        if nodo_actual == nodofin:
+            while nodo_actual is not None:
+                camino.append(nodo_actual)
+                nodo_actual = padres[nodo_actual]
+            return camino[::-1]
+        for vecino in nodos[next(key for key, nodo in nodos.items() if nodo.dato == nodo_actual)].vecinos:
+            if vecino.dato not in lista_nodos and vecino.dato not in por_inspeccionar:
+                padres[vecino.dato] = nodo_actual
+                por_inspeccionar.append(vecino.dato)
+
+    print("No se encontró un camino al nodo destino.")
+    return camino
+
+
 
 # Ejecución principal
 print("Bienvenido al proyecto de Estructura de Datos y Algoritmos")
