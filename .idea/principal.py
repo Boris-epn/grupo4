@@ -29,7 +29,8 @@ def definir_grafo():
         print("3. Editar un nodo")
         print("4. Mostrar el diccionario de grafo")
         print("5.Utilizar BFS")
-        print("6. Salir")
+        print("6. Utilizar DFS")
+        print("7. Salir")
         opcion = solicitar_entero("Seleccione una opción: ")
 
         if opcion == 1:  # Ingresar nuevo nodo
@@ -87,9 +88,18 @@ def definir_grafo():
             print(f'el nodo fin es : {nodo_fin}')
             camino=BFS(nodo_inicio,nodo_fin)
             print(camino)
+        elif opcion == 6:
+            camino=[]
+            nodo_actual = input('Coloque el nodo de inicio:')
+            nodo_fin = input('Coloque el contenido del nodo de fin')
+            for key in nodos:
+                if nodos[key].dato == nodo_actual:
+                    camino = camino_mas_profundo_dfs(nodos[key], nodo_fin)
+                    print("Camino más profundo:", camino)
 
+            print(f'El camino mas profundo es {camino}')
 
-        elif opcion == 6:  # Salir
+        elif opcion == 7:  # Salir
             print("Saliendo del programa.")
             break
 
@@ -129,6 +139,26 @@ def BFS(nodoinicio, nodofin):
             if vecino.dato not in lista_nodos and vecino.dato not in por_inspeccionar:
                 padres[vecino.dato] = nodo_actual
                 por_inspeccionar.append(vecino.dato)
+    def dfs(nodo_actual, nodo_destino, visitados, camino_actual, camino_mas_profundo):
+        visitados.add(nodo_actual.identificador)
+        camino_actual.append(nodo_actual.identificador)
+        if nodo_actual.identificador == nodo_destino.identificador:
+            if len(camino_actual) > len(camino_mas_profundo[0]):
+                camino_mas_profundo[0] = list(camino_actual)
+        else:
+            for vecino in nodo_actual.vecinos:
+                if vecino.identificador not in visitados:
+                    dfs(vecino, nodo_destino, visitados, camino_actual, camino_mas_profundo)
+        visitados.remove(nodo_actual.identificador)
+        camino_actual.pop()
+    def camino_mas_profundo_dfs(nodo_inicio, nodo_destino):
+        visitados = set()
+        camino_mas_profundo = [[]]
+        dfs(nodo_inicio, nodo_destino, visitados, [], camino_mas_profundo)
+        return camino_mas_profundo[0]
+
+
+
 
     print("No se encontró un camino al nodo destino.")
     return camino
