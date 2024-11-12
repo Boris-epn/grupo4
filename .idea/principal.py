@@ -1,4 +1,6 @@
 from collections import deque
+
+
 class Nodo:
     def __init__(self, dato=None, identificador=1):
         self.dato = dato
@@ -8,7 +10,10 @@ class Nodo:
     def agregar_vecino(self, vecino):
         if vecino not in self.vecinos:
             self.vecinos.append(vecino)
+
+
 nodos = {}
+
 def BFS(nodoinicio, nodofin):
     camino = []
     if nodoinicio not in [nodo.dato for nodo in nodos.values()] or nodofin not in [nodo.dato for nodo in nodos.values()]:
@@ -75,7 +80,8 @@ def definir_grafo():
                 nodos[identificador_actual] = nodo
                 datos.add(dato)
                 identificador_actual += 1
-                num_vecinos = solicitar_entero(f'Coloque el número de vecinos que contiene el nodo {nodo.identificador}: ')
+                num_vecinos = solicitar_entero(
+                    f'Coloque el número de vecinos que contiene el nodo {nodo.identificador}: ')
                 for _ in range(num_vecinos):
                     vecino_dato = input(f'Coloque el dato almacenado en el vecino: ')
                     vecino = next((n for n in nodos.values() if n.dato == vecino_dato), None)
@@ -87,10 +93,11 @@ def definir_grafo():
                     nodo.agregar_vecino(vecino)
             else:
                 print("El dato ya existe")
-                opcion = input("Desea colocar vecinos al nodo existente? (y/n): ")
+                opcion = input("¿Desea colocar vecinos al nodo existente? (y/n): ")
                 if opcion == 'y':
                     nodo = next(n for n in nodos.values() if n.dato == dato)
-                    num_vecinos = solicitar_entero(f'Coloque el número de vecinos que contiene el nodo {nodo.identificador}: ')
+                    num_vecinos = solicitar_entero(
+                        f'Coloque el número de vecinos que contiene el nodo {nodo.identificador}: ')
                     for _ in range(num_vecinos):
                         vecino_dato = input(f'Coloque el dato almacenado en el vecino: ')
                         vecino = next((n for n in nodos.values() if n.dato == vecino_dato), None)
@@ -147,10 +154,13 @@ def definir_grafo():
         else:
             print("Opción no válida. Intente de nuevo.")
 def construir_diccionario_grafo(nodos):
-    return {nodo.identificador: {'nombre': nodo.dato, 'vecinos': [vecino.identificador for vecino in nodo.vecinos]} for nodo in nodos.values()}
+    return {nodo.identificador: {'nombre': nodo.dato, 'vecinos': [vecino.identificador for vecino in nodo.vecinos]} for
+            nodo in nodos.values()}
 def imprimir_diccionario_grafo(grafo):
     print("\nDiccionario del grafo:")
     print(grafo)
+
 # Ejecución principal
 print("Bienvenido al proyecto de Estructura de Datos y Algoritmos")
 definir_grafo()
+
