@@ -1,6 +1,6 @@
 from collections import deque
 class Nodo:
-    def __init__(self, dato=None, identificador=1):
+    def __init__(self, dato=None, identificador = 1):
         self.dato = dato
         self.vecinos = []
         self.identificador = identificador
@@ -10,6 +10,8 @@ class Nodo:
         if vecino not in self.vecinos:
             self.vecinos.append(vecino)
 
+class grafo:
+  pass
 nodos={}
 def solicitar_entero(mensaje):
     while True:
@@ -24,7 +26,7 @@ def definir_grafo():
     identificador_actual = 1  # Contador de IDs para asignar secuencialmente
     while True:
         print("\nMenú de opciones:")
-        print("1. Ingresar un nuevo nodo")
+        print("1. Ingresar un nuevo nodo, o editar un nodo existente")
         print("2. Borrar un nodo")
         print("3. Editar un nodo")
         print("4. Mostrar el diccionario de grafo")
@@ -35,7 +37,9 @@ def definir_grafo():
 
         if opcion == 1:  # Ingresar nuevo nodo
             dato = input(f'Coloque el dato que se almacenará en el nodo {identificador_actual}: ')
+            print(f'La listaa de datos es {datos}')
             if dato not in datos:
+                print(f'Se considera es un nuevo nodo y se lo va a crear')
                 nodo = Nodo(dato, identificador_actual)
                 nodos[identificador_actual] = nodo
                 datos.add(dato)
@@ -48,10 +52,28 @@ def definir_grafo():
                     if vecino is None:
                         vecino = Nodo(vecino_dato, identificador_actual)
                         nodos[identificador_actual] = vecino
+                        datos.add(vecino_dato)
                         identificador_actual += 1
                     nodo.agregar_vecino(vecino)
             else:
-                print("El dato ya existe. Intente con otro.")
+                print("El dato ya existe")
+                opcion=input("Desea colocar vecinos al nodo existente? y/n")
+                if opcion == 'y':
+                    for key in nodos:
+                        print(f'intenta buscar el nodo en {key} con contenido {nodos[key].dato}')
+                        if nodos[key].dato == dato:
+                            nodo=nodos[key]
+                            print(f'se ha encontrado el nodo y ahora el nodo es {nodo.dato}')
+                    num_vecinos = solicitar_entero(f'Coloque el número de vecinos que contiene el nodo {nodo.identificador}: ')
+                    for _ in range(num_vecinos):
+                        vecino_dato = input(f'Coloque el dato almacenado en el vecino: ')
+                        vecino = next((n for n in nodos.values() if n.dato == vecino_dato), None)
+                        if vecino is None:
+                            vecino = Nodo(vecino_dato, identificador_actual)
+                            nodos[identificador_actual] = vecino
+                            datos.add(vecino_dato)
+                            identificador_actual += 1
+                        nodo.agregar_vecino(vecino)
 
         elif opcion == 2:  # Borrar nodo
             nodo_id = solicitar_entero("Ingrese el identificador del nodo que desea borrar: ")
@@ -118,27 +140,31 @@ def construir_diccionario_grafo(nodos):
 def imprimir_diccionario_grafo(grafo):
     print("\nDiccionario del grafo:")
     print(grafo)
-def BFS(nodoinicio, nodofin):
-    camino=[]
-    if nodoinicio not in [nodo.dato for nodo in nodos.values()] or nodofin not in [nodo.dato for nodo in nodos.values()]:
-        print('Coloque nodos válidos')
+
+    def BFS(nodoinicio, nodofin):
+        camino = []
+        if nodoinicio not in [nodo.dato for nodo in nodos.values()] or nodofin not in [nodo.dato for nodo in nodos.values()]:
+            print('Coloque nodos válidos')
+            return None
+        por_inspeccionar = deque()
+        por_inspeccionar.append(nodoinicio)
+        padres = {nodoinicio: None}
+        visitados = set()
+        while por_inspeccionar:
+            nodo_actual = por_inspeccionar.popleft()
+            visitados.add(nodo_actual)
+            if nodo_actual == nodofin:
+                while nodo_actual is not None:
+                    camino.append(nodo_actual)
+                    nodo_actual = padres[nodo_actual]
+                return camino[::-1]
+            nodo_obj = next(nodo for nodo in nodos.values() if nodo.dato == nodo_actual)
+            for vecino in nodo_obj.vecinos:
+                if vecino.dato not in visitados and vecino.dato not in por_inspeccionar:
+                    padres[vecino.dato] = nodo_actual
+                    por_inspeccionar.append(vecino.dato)
+        print("No se encontró un camino entre los nodos especificados.")
         return None
-    por_inspeccionar = deque()
-    por_inspeccionar.append(nodoinicio)
-    padres = {nodoinicio: None}
-    lista_nodos = set()
-    while por_inspeccionar:
-        nodo_actual = por_inspeccionar.popleft()
-        lista_nodos.add(nodo_actual)
-        if nodo_actual == nodofin:
-            while nodo_actual is not None:
-                camino.append(nodo_actual)
-                nodo_actual = padres[nodo_actual]
-            return camino[::-1]
-        for vecino in nodos[next(key for key, nodo in nodos.items() if nodo.dato == nodo_actual)].vecinos:
-            if vecino.dato not in lista_nodos and vecino.dato not in por_inspeccionar:
-                padres[vecino.dato] = nodo_actual
-                por_inspeccionar.append(vecino.dato)
     def dfs(nodo_actual, nodo_destino, visitados, camino_actual, camino_mas_profundo):
         visitados.add(nodo_actual.identificador)
         camino_actual.append(nodo_actual.identificador)
