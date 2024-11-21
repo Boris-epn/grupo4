@@ -1,3 +1,5 @@
+import networkx as nx
+import matplotlib.pyplot as plt
 from collections import deque
 
 
@@ -60,6 +62,16 @@ def solicitar_entero(mensaje):
             return int(input(mensaje))
         except ValueError:
             print("Por favor, ingrese un número válido.")
+def graficar_grafo():
+    grafo = nx.Graph()
+    for nodo in nodos.values():
+        grafo.add_node(nodo.identificador, label=nodo.dato)
+        for vecino in nodo.vecinos:
+            grafo.add_edge(nodo.identificador, vecino.identificador)
+    pos = nx.spring_layout(grafo)
+    labels = {nodo.identificador: nodo.dato for nodo in nodos.values()}
+    nx.draw(grafo, pos, with_labels=True, labels=labels, node_size=1500, node_color='lightblue', font_size=10, font_weight='bold', edge_color='gray')
+    plt.show()
 def definir_grafo():
     datos = set()
     identificador_actual = 1
@@ -132,6 +144,7 @@ def definir_grafo():
         elif opcion == 4:
             grafo = construir_diccionario_grafo(nodos)
             imprimir_diccionario_grafo(grafo)
+            graficar_grafo()
         elif opcion == 5:
             nodo_inicio = input('Coloque el contenido del nodo de inicio: ')
             nodo_fin = input('Coloque el contenido del nodo de fin: ')
