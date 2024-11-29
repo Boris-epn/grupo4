@@ -1,3 +1,5 @@
+import networkx as nx
+import matplotlib.pyplot as plt
 from collections import deque
 
 
@@ -38,16 +40,16 @@ def BFS(nodoinicio, nodofin):
     print("No se encontró un camino entre los nodos especificados.")
     return camino
 def dfs(nodo_actual, nodo_destino, visitados, camino_actual, camino_mas_profundo):
-    visitados.add(nodo_actual.identificador)
-    camino_actual.append(nodo_actual.identificador)
-    if nodo_actual.identificador == nodo_destino.identificador:
+    visitados.add(nodo_actual.dato)
+    camino_actual.append(nodo_actual.dato)
+    if nodo_actual.dato == nodo_destino.dato:
         if len(camino_actual) > len(camino_mas_profundo[0]):
             camino_mas_profundo[0] = list(camino_actual)
     else:
         for vecino in nodo_actual.vecinos:
-            if vecino.identificador not in visitados:
+            if vecino.dato not in visitados:
                 dfs(vecino, nodo_destino, visitados, camino_actual, camino_mas_profundo)
-    visitados.remove(nodo_actual.identificador)
+    visitados.remove(nodo_actual.dato)
     camino_actual.pop()
 def camino_mas_profundo_dfs(nodo_inicio, nodo_destino):
     visitados = set()
@@ -60,6 +62,16 @@ def solicitar_entero(mensaje):
             return int(input(mensaje))
         except ValueError:
             print("Por favor, ingrese un número válido.")
+def graficar_grafo():
+    grafo = nx.Graph()
+    for nodo in nodos.values():
+        grafo.add_node(nodo.identificador, label=nodo.dato)
+        for vecino in nodo.vecinos:
+            grafo.add_edge(nodo.identificador, vecino.identificador)
+    pos = nx.spring_layout(grafo)
+    labels = {nodo.identificador: nodo.dato for nodo in nodos.values()}
+    nx.draw(grafo, pos, with_labels=True, labels=labels, node_size=1500, node_color='lightblue', font_size=10, font_weight='bold', edge_color='gray')
+    plt.show()
 def definir_grafo():
     datos = set()
     identificador_actual = 1
@@ -132,6 +144,7 @@ def definir_grafo():
         elif opcion == 4:
             grafo = construir_diccionario_grafo(nodos)
             imprimir_diccionario_grafo(grafo)
+            graficar_grafo()
         elif opcion == 5:
             nodo_inicio = input('Coloque el contenido del nodo de inicio: ')
             nodo_fin = input('Coloque el contenido del nodo de fin: ')
