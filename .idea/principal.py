@@ -39,6 +39,8 @@ def BFS(nodoinicio, nodofin):
                 por_inspeccionar.append(vecino.dato)
     print("No se encontró un camino entre los nodos especificados.")
     return camino
+
+
 def dfs(nodo_actual, nodo_destino, visitados, camino_actual, camino_mas_profundo):
     visitados.add(nodo_actual.dato)
     camino_actual.append(nodo_actual.dato)
@@ -51,17 +53,23 @@ def dfs(nodo_actual, nodo_destino, visitados, camino_actual, camino_mas_profundo
                 dfs(vecino, nodo_destino, visitados, camino_actual, camino_mas_profundo)
     visitados.remove(nodo_actual.dato)
     camino_actual.pop()
+
+
 def camino_mas_profundo_dfs(nodo_inicio, nodo_destino):
     visitados = set()
     camino_mas_profundo = [[]]
     dfs(nodo_inicio, nodo_destino, visitados, [], camino_mas_profundo)
     return camino_mas_profundo[0]
+
+
 def solicitar_entero(mensaje):
     while True:
         try:
             return int(input(mensaje))
         except ValueError:
             print("Por favor, ingrese un número válido.")
+
+
 def graficar_grafo():
     grafo = nx.Graph()
     for nodo in nodos.values():
@@ -72,12 +80,14 @@ def graficar_grafo():
     labels = {nodo.identificador: nodo.dato for nodo in nodos.values()}
     nx.draw(grafo, pos, with_labels=True, labels=labels, node_size=1500, node_color='lightblue', font_size=10, font_weight='bold', edge_color='gray')
     plt.show()
+
+
 def definir_grafo():
     datos = set()
     identificador_actual = 1
     while True:
         print("\nMenú de opciones:")
-        print("1. Ingresar un nuevo nodo, o editar un nodo existente")
+        print("1. Ingresar un nuevo nodo")
         print("2. Borrar un nodo")
         print("3. Editar un nodo")
         print("4. Mostrar el diccionario de grafo")
@@ -85,6 +95,7 @@ def definir_grafo():
         print("6. Utilizar DFS")
         print("7. Salir")
         opcion = solicitar_entero("Seleccione una opción: ")
+        
         if opcion == 1:
             dato = input(f'Coloque el dato que se almacenará en el nodo {identificador_actual}: ')
             if dato not in datos:
@@ -128,6 +139,7 @@ def definir_grafo():
                 print(f"Nodo {nodo_id} borrado.")
             else:
                 print("El nodo no existe.")
+
         elif opcion == 3:
             nodo_id = solicitar_entero("Ingrese el identificador del nodo que desea editar: ")
             if nodo_id in nodos:
@@ -141,15 +153,24 @@ def definir_grafo():
                     print("El dato ya existe. Intente con otro.")
             else:
                 print("El nodo no existe.")
+
         elif opcion == 4:
             grafo = construir_diccionario_grafo(nodos)
             imprimir_diccionario_grafo(grafo)
             graficar_grafo()
+
         elif opcion == 5:
             nodo_inicio = input('Coloque el contenido del nodo de inicio: ')
             nodo_fin = input('Coloque el contenido del nodo de fin: ')
-            camino = BFS(nodo_inicio, nodo_fin)
+            nodo_inicio = next((n for n in nodos.values() if n.dato == nodo_inicio_dato), None)
+            nodo_fin = next((n for n in nodos.values() if n.dato == nodo_fin_dato), None)
+            if nodo_inicio and nodo_fin:
+                camino = BFS(nodo_inicio, nodo_fin)
+                print(f"Camino BFS: {camino}")
+            else:
+                print("Nodos de inicio o fin no encontrados.")
             print(f"Camino BFS: {camino}")
+
         elif opcion == 6:
             nodo_inicio_dato = input('Coloque el nodo de inicio: ')
             nodo_fin_dato = input('Coloque el contenido del nodo de fin: ')
@@ -160,15 +181,21 @@ def definir_grafo():
                 print(f"Camino más profundo DFS: {camino}")
             else:
                 print("Nodos de inicio o fin no encontrados.")
+                
         elif opcion == 7:
             print("Saliendo del programa.")
             break
 
         else:
             print("Opción no válida. Intente de nuevo.")
+
+
+
 def construir_diccionario_grafo(nodos):
     return {nodo.identificador: {'nombre': nodo.dato, 'vecinos': [vecino.identificador for vecino in nodo.vecinos]} for
             nodo in nodos.values()}
+
+
 def imprimir_diccionario_grafo(grafo):
     print("\nDiccionario del grafo:")
     print(grafo)
